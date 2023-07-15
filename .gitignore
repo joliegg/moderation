@@ -1,0 +1,39 @@
+# System Files
+.DS_Store
+*~
+._*
+~*
+.thumbs
+.Thumbs
+
+# Package File
+*.zip
+*.rar
+
+# IDE/Text Editor Generated
+.vscode
+.buildconfig
+
+# Package Managers
+node_modules
+package-lock.json
+
+# Build systems
+.cache
+dist/dist
+
+# Other
+cache
+.cache
+.parcel-cache
+build
+release
+*.log
+.conf
+.ftpconfig
+.sftpconfig
+
+cypress/videos/
+cypress/screenshots/
+
+.env
