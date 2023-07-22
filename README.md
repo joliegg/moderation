@@ -2,9 +2,7 @@
 
 # Chat Moderation
 
-This library uses AWS Rekognition to generate moderation tags for images and Google's Language library to moderate text.
-
-So far only JPEG and PNG images are supported for moderation.
+This library uses AWS Rekognition to generate moderation tags for images and Google's Language and Speech libraries to moderate text and audio files.
 
 ## Installation
 
@@ -19,18 +17,22 @@ yarn add @kirino-bot/moderation
 ```js
 import ModerationClient from '@kirino-bot/moderation';
 
-const { AWS_REGION, AWS_ACCESS_KEY_ID, AWS_ACCESS_KEY_SECRET } = process.env;
+const { AWS_REGION, AWS_ACCESS_KEY_ID, AWS_ACCESS_KEY_SECRET, GOOGLE_APPLICATION_CREDENTIALS, GOOGLE_API_KEY } = process.env;
 
 const client = new ModerationClient({
   aws: {
-  region: AWS_REGION,
-  credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_ACCESS_KEY_SECRET
+    region: AWS_REGION,
+    credentials: {
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_ACCESS_KEY_SECRET
+    },
   },
-}
+  google: {
+    keyFile: GOOGLE_APPLICATION_CREDENTIALS,
+    apiKey: GOOGLE_API_KEY
+  },
+  banlist: ['some word'],
 });
-
 ```
 
 ### Moderating Text
@@ -40,8 +42,19 @@ const textModeration = await client.moderateText('This is some text that might n
 ```
 
 ### Moderating Images
+Since only JPEG and PNG images are natively supported by AWS for moderation, GIF images will be converted into a sprite sheet and WEBP images will be converted to PNG.
 
 ```js
 
 const imageModeration = await client.moderateImage('https://example.example/image.png');
 ```
+
+### Moderating Audios
+Currently only OGG files are supported
+
+```js
+
+const audioModeration = await client.moderateAudio('https://example.example/image.ogg');
+```
+
+

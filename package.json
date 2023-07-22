@@ -1,6 +1,6 @@
 {
   "name": "@kirino-bot/moderation",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A set of tools for chat moderation",
   "author": "Diana Islas Ocampo",
   "main": "dist/index.js",
@@ -24,7 +24,9 @@
   "dependencies": {
     "@aws-sdk/client-rekognition": "^3.370.0",
     "@google-cloud/language": "^5.3.0",
-    "axios": "^1.4.0"
+    "@google-cloud/speech": "^5.6.0",
+    "axios": "^1.4.0",
+    "sharp": "^0.32.3"
   },
   "files": [
     "README.md",
