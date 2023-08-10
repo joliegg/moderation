@@ -7,7 +7,7 @@ This library uses AWS Rekognition to generate moderation tags for images and Goo
 ## Installation
 
 ```bash
-yarn add @kirino-bot/moderation
+yarn add @joliegg/moderation
 ```
 
 
@@ -15,7 +15,7 @@ yarn add @kirino-bot/moderation
 
 
 ```js
-import ModerationClient from '@kirino-bot/moderation';
+import ModerationClient from '@joliegg/moderation';
 
 const { AWS_REGION, AWS_ACCESS_KEY_ID, AWS_ACCESS_KEY_SECRET, GOOGLE_APPLICATION_CREDENTIALS, GOOGLE_API_KEY } = process.env;
 
