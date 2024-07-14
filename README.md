@@ -57,4 +57,11 @@ Currently only OGG files are supported
 const audioModeration = await client.moderateAudio('https://example.example/image.ogg');
 ```
 
+### Moderating Links
+Link moderation will use the Google WebRisk API to check links. A Blacklist is also included for known scam urls.
 
+
+```js
+
+const linkModeration = await client.moderateLink('https://example.example/link');
+```

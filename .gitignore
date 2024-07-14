@@ -17,6 +17,14 @@
 # Package Managers
 node_modules
 package-lock.json
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+#!.yarn/cache
+.pnp.*
 
 # Build systems
 .cache
@@ -37,3 +45,4 @@ cypress/videos/
 cypress/screenshots/
 
 .env
+test

@@ -6,6 +6,9 @@ import { SpeechClient, protos } from '@google-cloud/speech';
 
 import sharp from 'sharp';
 
+import URLBlackList from './url-blacklist.json';
+
+
 import { ModerationCategory, ModerationConfiguration, ModerationResult, ThreatsResponse } from './types';
 
 
@@ -145,6 +148,13 @@ class ModerationClient {
   }
 
   async moderateLink (url: string): Promise<ModerationResult> {
+    const blacklisted = URLBlackList.some(b => url.indexOf(b) > -1);
+
+    if (blacklisted) {
+      return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
+    }
+
+
     if (typeof this.googleAPIKey !== 'string') {
       return { source: url, moderation: [] };
     }
@@ -166,7 +176,7 @@ class ModerationClient {
     if (Array.isArray(threats)) {
       const moderation = threats.map(t => ({
         category: t,
-        confidence: 1,
+        confidence: 100,
       }));
 
       return { source: url, moderation };

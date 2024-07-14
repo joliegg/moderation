@@ -8,6 +8,7 @@ const client_rekognition_1 = require("@aws-sdk/client-rekognition");
 const language_1 = require("@google-cloud/language");
 const speech_1 = require("@google-cloud/speech");
 const sharp_1 = __importDefault(require("sharp"));
+const url_blacklist_json_1 = __importDefault(require("./url-blacklist.json"));
 /**
  * Moderation Client
  *
@@ -120,6 +121,10 @@ class ModerationClient {
         return { source: url, moderation: [] };
     }
     async moderateLink(url) {
+        const blacklisted = url_blacklist_json_1.default.some(b => url.indexOf(b) > -1);
+        if (blacklisted) {
+            return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
+        }
         if (typeof this.googleAPIKey !== 'string') {
             return { source: url, moderation: [] };
         }
@@ -136,7 +141,7 @@ class ModerationClient {
         if (Array.isArray(threats)) {
             const moderation = threats.map(t => ({
                 category: t,
-                confidence: 1,
+                confidence: 100,
             }));
             return { source: url, moderation };
         }

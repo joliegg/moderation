@@ -9,9 +9,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node16",
-    "outDir": "dist"
+    "outDir": "dist",
+    "resolveJsonModule": true
   },
-  "include": ["./src", "./.eslintrc.cjs"],
+  "include": ["./src", "eslint.config.mjs"],
   "typedocOptions": {
     "entryPoints": ["src/**/*"],
     "out": "docs"

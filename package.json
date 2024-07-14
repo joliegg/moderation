@@ -1,6 +1,6 @@
 {
   "name": "@joliegg/moderation",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A set of tools for chat moderation",
   "author": "Diana Islas Ocampo",
   "main": "dist/index.js",
@@ -8,24 +8,28 @@
   "scripts": {
     "publish": "yarn build && yarn docs",
     "build": "yarn eslint . && rm -rf ./dist && yarn tsc --declaration",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "test": "node test/index.js"
   },
   "engines": {
     "node": "20.x"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.22.15",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
-    "eslint": "^8.50.0",
-    "typedoc": "^0.25.1",
-    "typescript": "^5.2.2"
+    "@babel/eslint-parser": "^7.24.8",
+    "@eslint/js": "^9.7.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.7.0",
+    "typedoc": "^0.26.4",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.16.0"
   },
   "dependencies": {
-    "@aws-sdk/client-rekognition": "^3.425.0",
-    "@google-cloud/language": "^6.1.0",
-    "@google-cloud/speech": "^6.0.2",
-    "axios": "^1.5.1",
+    "@aws-sdk/client-rekognition": "^3.614.0",
+    "@google-cloud/language": "^6.4.0",
+    "@google-cloud/speech": "^6.6.1",
+    "axios": "^1.7.2",
     "sharp": "^0.32.6"
   },
   "files": [
@@ -34,5 +38,6 @@
     "package.json",
     "src/*",
     "dist/*"
-  ]
+  ],
+  "packageManager": "yarn@4.3.1"
 }
