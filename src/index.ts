@@ -19,7 +19,7 @@ type ISpeechRecognitionResult = protos.google.cloud.speech.v1.ISpeechRecognition
 /**
  * Moderation Client
  *
- * @name ModerationClient
+ * @class ModerationClient
  */
 class ModerationClient {
 
@@ -27,7 +27,8 @@ class ModerationClient {
   private googleLanguageClient?: LanguageServiceClient;
   private googleSpeechClient?: SpeechClient;
   private googleAPIKey?: string;
-  private banList?: string[];
+  private banList?: string[] = [];
+  private urlBlackList?: string[] = [];
 
   /**
    *
@@ -50,6 +51,10 @@ class ModerationClient {
     if (Array.isArray(configuration.banList)) {
       this.banList = configuration.banList;
     }
+
+    if (Array.isArray(configuration.urlBlackList)) {
+      this.urlBlackList = configuration.urlBlackList;
+    }
   }
 
   /**
@@ -69,7 +74,7 @@ class ModerationClient {
 
       if (matches.length > 0) {
         categories.push({
-          category: 'Ban List',
+          category: 'BAN_LIST',
           confidence: matches.length,
         });
       }
@@ -148,9 +153,15 @@ class ModerationClient {
   }
 
   async moderateLink (url: string): Promise<ModerationResult> {
-    const blacklisted = URLBlackList.some(b => url.indexOf(b) > -1);
+    const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
 
     if (blacklisted) {
+      return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };
+    }
+
+    const globallyBlacklisted = URLBlackList.some(b => url.indexOf(b) > -1);
+
+    if (globallyBlacklisted) {
       return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
     }
 
@@ -185,7 +196,7 @@ class ModerationClient {
     return { source: url, moderation: [] };
   }
 
-  async moderateAudio (url: string, minimumConfidence: number = 50): Promise<ModerationResult> {
+  async moderateAudio (url: string, language: string = 'en-US', minimumConfidence: number = 50): Promise<ModerationResult> {
     if (typeof this.googleSpeechClient === 'undefined') {
       return { source: url, moderation: [] };
     }
@@ -196,7 +207,7 @@ class ModerationClient {
     const options: IRecognitionConfig = {
       encoding: 'OGG_OPUS',
       sampleRateHertz: 48000,
-      languageCode: 'es-US'
+      languageCode: language,
     };
 
     const [ response ] = await this.googleSpeechClient.recognize ({

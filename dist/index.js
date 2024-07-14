@@ -12,14 +12,15 @@ const url_blacklist_json_1 = __importDefault(require("./url-blacklist.json"));
 /**
  * Moderation Client
  *
- * @name ModerationClient
+ * @class ModerationClient
  */
 class ModerationClient {
     rekognitionClient;
     googleLanguageClient;
     googleSpeechClient;
     googleAPIKey;
-    banList;
+    banList = [];
+    urlBlackList = [];
     /**
      *
      * @param {ModerationConfiguration} configuration
@@ -38,6 +39,9 @@ class ModerationClient {
         if (Array.isArray(configuration.banList)) {
             this.banList = configuration.banList;
         }
+        if (Array.isArray(configuration.urlBlackList)) {
+            this.urlBlackList = configuration.urlBlackList;
+        }
     }
     /**
      * Returns a list of moderation categories detected on a text
@@ -54,7 +58,7 @@ class ModerationClient {
             const matches = this.banList.filter(w => normalizedText.indexOf(w) > -1);
             if (matches.length > 0) {
                 categories.push({
-                    category: 'Ban List',
+                    category: 'BAN_LIST',
                     confidence: matches.length,
                 });
             }
@@ -121,8 +125,12 @@ class ModerationClient {
         return { source: url, moderation: [] };
     }
     async moderateLink(url) {
-        const blacklisted = url_blacklist_json_1.default.some(b => url.indexOf(b) > -1);
+        const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
         if (blacklisted) {
+            return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };
+        }
+        const globallyBlacklisted = url_blacklist_json_1.default.some(b => url.indexOf(b) > -1);
+        if (globallyBlacklisted) {
             return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
         }
         if (typeof this.googleAPIKey !== 'string') {
@@ -147,7 +155,7 @@ class ModerationClient {
         }
         return { source: url, moderation: [] };
     }
-    async moderateAudio(url, minimumConfidence = 50) {
+    async moderateAudio(url, language = 'en-US', minimumConfidence = 50) {
         if (typeof this.googleSpeechClient === 'undefined') {
             return { source: url, moderation: [] };
         }
@@ -155,7 +163,7 @@ class ModerationClient {
         const options = {
             encoding: 'OGG_OPUS',
             sampleRateHertz: 48000,
-            languageCode: 'es-US'
+            languageCode: language,
         };
         const [response] = await this.googleSpeechClient.recognize({
             audio: { content: Buffer.from(data, 'binary').toString('base64') },

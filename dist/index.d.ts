@@ -2,7 +2,7 @@ import { ModerationConfiguration, ModerationResult } from './types';
 /**
  * Moderation Client
  *
- * @name ModerationClient
+ * @class ModerationClient
  */
 declare class ModerationClient {
     private rekognitionClient?;
@@ -10,6 +10,7 @@ declare class ModerationClient {
     private googleSpeechClient?;
     private googleAPIKey?;
     private banList?;
+    private urlBlackList?;
     /**
      *
      * @param {ModerationConfiguration} configuration
@@ -35,6 +36,6 @@ declare class ModerationClient {
      */
     moderateImage(url: string, minimumConfidence?: number): Promise<ModerationResult>;
     moderateLink(url: string): Promise<ModerationResult>;
-    moderateAudio(url: string, minimumConfidence?: number): Promise<ModerationResult>;
+    moderateAudio(url: string, language?: string, minimumConfidence?: number): Promise<ModerationResult>;
 }
 export default ModerationClient;

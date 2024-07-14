@@ -13,6 +13,7 @@ const moderationClient = new ModerationClient({
     apiKey: process.env.GOOGLE_API_KEY,
   },
   banList: ['badword'],
+  urlBlackList: ['badurl.example']
 });
 
 (async () => {
@@ -23,4 +24,8 @@ const moderationClient = new ModerationClient({
 
   // Check if Blacklist is working
   console.log(await moderationClient.moderateLink('660060wwr-roblox.com'));
+
+  console.log(await moderationClient.moderateLink('https://www.google.com'));
+
+  console.log(await moderationClient.moderateLink('https://badurl.example?query=1'));
 })();

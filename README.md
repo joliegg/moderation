@@ -32,6 +32,7 @@ const client = new ModerationClient({
     apiKey: GOOGLE_API_KEY
   },
   banlist: ['some word'],
+  urlBlackList: ['someurl.example'],
 });
 ```
 
@@ -54,7 +55,7 @@ Currently only OGG files are supported
 
 ```js
 
-const audioModeration = await client.moderateAudio('https://example.example/image.ogg');
+const audioModeration = await client.moderateAudio('https://example.example/image.ogg', 'en-US');
 ```
 
 ### Moderating Links

@@ -6,6 +6,7 @@ export interface ModerationConfiguration {
         keyFile?: string;
     };
     banList?: string[];
+    urlBlackList?: string[];
 }
 export interface ModerationCategory {
     category: string;
