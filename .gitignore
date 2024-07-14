@@ -45,4 +45,4 @@ cypress/videos/
 cypress/screenshots/
 
 .env
-test
+google.json
