@@ -73,9 +73,11 @@ class ModerationClient {
       const matches = this.banList.filter(w => normalizedText.indexOf(w) > -1);
 
       if (matches.length > 0) {
+        const words = normalizedText.split(' ');
+
         categories.push({
           category: 'BAN_LIST',
-          confidence: matches.length,
+          confidence: (matches.length / words.length) * 100,
         });
       }
     }

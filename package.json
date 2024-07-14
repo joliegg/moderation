@@ -1,6 +1,6 @@
 {
   "name": "@joliegg/moderation",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A set of tools for chat moderation",
   "author": "Diana Islas Ocampo",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "node test/index.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": ">=20.x"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.24.8",
