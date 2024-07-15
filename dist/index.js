@@ -88,12 +88,12 @@ class ModerationClient {
      * Returns a list of moderation categories detected on an image
      *
      * @param {string} url
-     * @param {number} [minimumConfidence = 95]  The minimum confidence required for a category to be considered
+     * @param {number} [minimumConfidence = 50]  The minimum confidence required for a category to be considered
      *
      *
      * @returns {Promise<ModerationResult[]>} The list of results that were detected with the minimum confidence specified
      */
-    async moderateImage(url, minimumConfidence = 95) {
+    async moderateImage(url, minimumConfidence = 50) {
         if (typeof this.rekognitionClient === 'undefined') {
             return { source: url, moderation: [] };
         }

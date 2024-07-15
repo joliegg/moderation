@@ -29,7 +29,7 @@ declare class ModerationClient {
      * Returns a list of moderation categories detected on an image
      *
      * @param {string} url
-     * @param {number} [minimumConfidence = 95]  The minimum confidence required for a category to be considered
+     * @param {number} [minimumConfidence = 50]  The minimum confidence required for a category to be considered
      *
      *
      * @returns {Promise<ModerationResult[]>} The list of results that were detected with the minimum confidence specified

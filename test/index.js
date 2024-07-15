@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { default: ModerationClient } = require('../dist/index.js');
 
 const moderationClient = new ModerationClient({
@@ -28,4 +30,5 @@ const moderationClient = new ModerationClient({
   console.log(await moderationClient.moderateLink('https://www.google.com'));
 
   console.log(await moderationClient.moderateLink('https://badurl.example?query=1'));
+
 })();
