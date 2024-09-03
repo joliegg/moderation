@@ -35,7 +35,7 @@ declare class ModerationClient {
      * @returns {Promise<ModerationResult[]>} The list of results that were detected with the minimum confidence specified
      */
     moderateImage(url: string, minimumConfidence?: number): Promise<ModerationResult>;
-    moderateLink(url: string): Promise<ModerationResult>;
+    moderateLink(url: string, allowShorteners?: boolean): Promise<ModerationResult>;
     moderateAudio(url: string, language?: string, minimumConfidence?: number): Promise<ModerationResult>;
 }
 export default ModerationClient;

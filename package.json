@@ -1,6 +1,6 @@
 {
   "name": "@joliegg/moderation",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A set of tools for chat moderation",
   "author": "Diana Islas Ocampo",
   "main": "dist/index.js",

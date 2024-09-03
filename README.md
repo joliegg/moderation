@@ -66,3 +66,10 @@ Link moderation will use the Google WebRisk API to check links. A Blacklist is a
 
 const linkModeration = await client.moderateLink('https://example.example/link');
 ```
+
+Link shorteners trigger a warning by default as they are considered non-trustable. If they need to be allowed, set its flag to true.
+
+```js
+
+const linkModeration = await client.moderateLink('https://t.ly/link', true);
+```

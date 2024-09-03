@@ -7,6 +7,7 @@ import { SpeechClient, protos } from '@google-cloud/speech';
 import sharp from 'sharp';
 
 import URLBlackList from './url-blacklist.json';
+import URLShortenerList from './url-shorteners.json';
 
 
 import { ModerationCategory, ModerationConfiguration, ModerationResult, ThreatsResponse } from './types';
@@ -154,8 +155,16 @@ class ModerationClient {
     return { source: url, moderation: [] };
   }
 
-  async moderateLink (url: string): Promise<ModerationResult> {
+  async moderateLink (url: string, allowShorteners = false): Promise<ModerationResult> {
     const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
+
+    if (!allowShorteners) {
+      const isShortened = URLShortenerList.some(s => url.indexOf(s) > -1);
+
+      if (isShortened) {
+        return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+      }
+    }
 
     if (blacklisted) {
       return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };

@@ -9,6 +9,7 @@ const language_1 = require("@google-cloud/language");
 const speech_1 = require("@google-cloud/speech");
 const sharp_1 = __importDefault(require("sharp"));
 const url_blacklist_json_1 = __importDefault(require("./url-blacklist.json"));
+const url_shorteners_json_1 = __importDefault(require("./url-shorteners.json"));
 /**
  * Moderation Client
  *
@@ -125,8 +126,14 @@ class ModerationClient {
         }
         return { source: url, moderation: [] };
     }
-    async moderateLink(url) {
+    async moderateLink(url, allowShorteners = false) {
         const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
+        if (!allowShorteners) {
+            const isShortened = url_shorteners_json_1.default.some(s => url.indexOf(s) > -1);
+            if (isShortened) {
+                return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+            }
+        }
         if (blacklisted) {
             return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };
         }
