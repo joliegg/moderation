@@ -129,9 +129,18 @@ class ModerationClient {
     async moderateLink(url, allowShorteners = false) {
         const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
         if (!allowShorteners) {
-            const isShortened = url_shorteners_json_1.default.some(s => url.indexOf(s) > -1);
-            if (isShortened) {
-                return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+            try {
+                const domain = new URL(url).hostname;
+                const isShortened = url_shorteners_json_1.default.some(s => s.indexOf(domain) > -1);
+                if (isShortened) {
+                    return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+                }
+            }
+            catch (e) {
+                const isShortened = url_shorteners_json_1.default.some(s => url.indexOf(s) > -1);
+                if (isShortened) {
+                    return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+                }
             }
         }
         if (blacklisted) {

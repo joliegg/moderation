@@ -31,6 +31,8 @@ const moderationClient = new ModerationClient({
 
   console.log(await moderationClient.moderateLink('https://badurl.example?query=1'));
 
-  console.log(await moderationClient.moderateLink('https://t.ly/shortened'))
+  console.log(await moderationClient.moderateLink('https://t.ly/shortened'));
+
+  console.log(await moderationClient.moderateLink('https://onet.ly/shortened'));
 
 })();

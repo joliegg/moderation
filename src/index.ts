@@ -159,10 +159,19 @@ class ModerationClient {
     const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
 
     if (!allowShorteners) {
-      const isShortened = URLShortenerList.some(s => url.indexOf(s) > -1);
+      try {
+        const domain = new URL(url).hostname;
+        const isShortened = URLShortenerList.some(s => s.indexOf(domain) > -1);
 
-      if (isShortened) {
-        return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+        if (isShortened) {
+          return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+        }
+      } catch (e) {
+        const isShortened = URLShortenerList.some(s => url.indexOf(s) > -1);
+
+        if (isShortened) {
+          return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
+        }
       }
     }
 
@@ -175,7 +184,6 @@ class ModerationClient {
     if (globallyBlacklisted) {
       return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
     }
-
 
     if (typeof this.googleAPIKey !== 'string') {
       return { source: url, moderation: [] };
