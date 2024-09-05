@@ -17,6 +17,8 @@ type IRecognitionConfig = protos.google.cloud.speech.v1.IRecognitionConfig;
 
 type ISpeechRecognitionResult = protos.google.cloud.speech.v1.ISpeechRecognitionResult;
 
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB in bytes for Rekognition limit
+
 /**
  * Moderation Client
  *
@@ -134,6 +136,35 @@ class ModerationClient {
     } else {
        // Download image as binary data
       buffer = Buffer.from(data, 'binary');
+    }
+
+    // Ensure image is not larger than 5MB (Rekognition limit)
+    if (buffer.length > MAX_IMAGE_SIZE) {
+      try {
+        // Calculate new dimensions to reduce size
+        const metadata = await sharp(buffer).metadata();
+
+        const { width, height } = metadata;
+
+        if (typeof width !== 'number' || typeof height !== 'number') {
+          throw new Error('Invalid image metadata');
+        }
+
+        // Calculate the scaling factor
+        const scalingFactor = Math.sqrt(MAX_IMAGE_SIZE / buffer.length);
+
+        // Calculate new dimensions
+        const newWidth = Math.floor(width * scalingFactor);
+        const newHeight = Math.floor(height * scalingFactor);
+
+        const resizedBuffer = await sharp(buffer)
+          .resize(Math.round(newWidth), Math.round(newHeight))
+          .toBuffer();
+
+        buffer = resizedBuffer;
+      } catch (error) {
+        // We can't resize the image. We'll skip the resize and try to process it as is
+      }
     }
 
     const { ModerationLabels } = await this.rekognitionClient.detectModerationLabels({

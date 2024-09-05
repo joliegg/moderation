@@ -10,6 +10,7 @@ const speech_1 = require("@google-cloud/speech");
 const sharp_1 = __importDefault(require("sharp"));
 const url_blacklist_json_1 = __importDefault(require("./url-blacklist.json"));
 const url_shorteners_json_1 = __importDefault(require("./url-shorteners.json"));
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB in bytes for Rekognition limit
 /**
  * Moderation Client
  *
@@ -110,6 +111,29 @@ class ModerationClient {
         else {
             // Download image as binary data
             buffer = Buffer.from(data, 'binary');
+        }
+        // Ensure image is not larger than 5MB (Rekognition limit)
+        if (buffer.length > MAX_IMAGE_SIZE) {
+            try {
+                // Calculate new dimensions to reduce size
+                const metadata = await (0, sharp_1.default)(buffer).metadata();
+                const { width, height } = metadata;
+                if (typeof width !== 'number' || typeof height !== 'number') {
+                    throw new Error('Invalid image metadata');
+                }
+                // Calculate the scaling factor
+                const scalingFactor = Math.sqrt(MAX_IMAGE_SIZE / buffer.length);
+                // Calculate new dimensions
+                const newWidth = Math.floor(width * scalingFactor);
+                const newHeight = Math.floor(height * scalingFactor);
+                const resizedBuffer = await (0, sharp_1.default)(buffer)
+                    .resize(Math.round(newWidth), Math.round(newHeight))
+                    .toBuffer();
+                buffer = resizedBuffer;
+            }
+            catch (error) {
+                // We can't resize the image. We'll skip the resize and try to process it as is
+            }
         }
         const { ModerationLabels } = await this.rekognitionClient.detectModerationLabels({
             Image: {
