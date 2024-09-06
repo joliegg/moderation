@@ -151,28 +151,26 @@ class ModerationClient {
         return { source: url, moderation: [] };
     }
     async moderateLink(url, allowShorteners = false) {
-        const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
-        if (!allowShorteners) {
-            try {
-                const domain = new URL(url).hostname;
-                const isShortened = url_shorteners_json_1.default.some(s => s.indexOf(domain) > -1);
-                if (isShortened) {
-                    return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
-                }
+        try {
+            const domain = new URL(url).hostname;
+            const blacklisted = this.urlBlackList?.some(u => u.indexOf(url) > -1);
+            if (blacklisted) {
+                return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };
             }
-            catch (e) {
-                const isShortened = url_shorteners_json_1.default.some(s => url.indexOf(s) > -1);
+            const globallyBlacklisted = url_blacklist_json_1.default.some(u => u === domain);
+            if (globallyBlacklisted) {
+                return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
+            }
+            if (!allowShorteners) {
+                const isShortened = url_shorteners_json_1.default.some(u => u === domain);
                 if (isShortened) {
                     return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
                 }
             }
         }
-        if (blacklisted) {
-            return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };
-        }
-        const globallyBlacklisted = url_blacklist_json_1.default.some(b => url.indexOf(b) > -1);
-        if (globallyBlacklisted) {
-            return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
+        catch (error) {
+            // Invalid URL
+            return { source: url, moderation: [] };
         }
         if (typeof this.googleAPIKey !== 'string') {
             return { source: url, moderation: [] };

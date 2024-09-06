@@ -35,4 +35,8 @@ const moderationClient = new ModerationClient({
 
   console.log(await moderationClient.moderateLink('https://onet.ly/shortened'));
 
+  console.log(await moderationClient.moderateLink('https://twitch.tv'));
+
+  console.log(await moderationClient.moderateLink('http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/MALWARE/URL/'));
+
 })();

@@ -187,33 +187,31 @@ class ModerationClient {
   }
 
   async moderateLink (url: string, allowShorteners = false): Promise<ModerationResult> {
-    const blacklisted = this.urlBlackList?.some(b => url.indexOf(b) > -1);
+    try {
+      const domain = new URL(url).hostname;
 
-    if (!allowShorteners) {
-      try {
-        const domain = new URL(url).hostname;
-        const isShortened = URLShortenerList.some(s => s.indexOf(domain) > -1);
+      const blacklisted = this.urlBlackList?.some(u => u.indexOf(url) > -1);
 
-        if (isShortened) {
-          return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
-        }
-      } catch (e) {
-        const isShortened = URLShortenerList.some(s => url.indexOf(s) > -1);
+      if (blacklisted) {
+        return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };
+      }
+
+      const globallyBlacklisted = URLBlackList.some(u => u === domain);
+
+      if (globallyBlacklisted) {
+        return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
+      }
+
+      if (!allowShorteners) {
+        const isShortened = URLShortenerList.some(u => u === domain);
 
         if (isShortened) {
           return { source: url, moderation: [{ category: 'URL_SHORTENER', confidence: 100 }] };
         }
       }
-    }
-
-    if (blacklisted) {
-      return { source: url, moderation: [{ category: 'CUSTOM_BLACK_LIST', confidence: 100 }] };
-    }
-
-    const globallyBlacklisted = URLBlackList.some(b => url.indexOf(b) > -1);
-
-    if (globallyBlacklisted) {
-      return { source: url, moderation: [{ category: 'BLACK_LIST', confidence: 100 }] };
+    } catch (error) {
+      // Invalid URL
+      return { source: url, moderation: [] };
     }
 
     if (typeof this.googleAPIKey !== 'string') {
